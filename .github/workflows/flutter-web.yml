@@ -1,12 +1,13 @@
-name: Flutter Web CI/CD
+name: Flutter Web CI/CD (main)
 
 on:
   push:
-    branches: [ "main", "dev" ]
+    branches: [ "main" ]
   pull_request:
+    branches: [ "main" ]
 
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,18 +17,9 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.35.4" # 🔥 фиксим Flutter с Dart 3.9.2
+          flutter-version: "3.35.4"
           channel: "stable"
           cache: true
-          
-      - name: Cache Flutter dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.pub-cache
-            .dart_tool
-          key: ${{ runner.os }}-pub-${{ hashFiles('pubspec.lock') }}
-          restore-keys: ${{ runner.os }}-pub-
 
       - name: Install dependencies
         run: flutter pub get
