@@ -1,13 +1,12 @@
-name: Flutter Web CI/CD (main)
+name: Flutter Web CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
   pull_request:
-    branches: [ "main" ]
 
 jobs:
-  build-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,12 +19,21 @@ jobs:
           flutter-version: "3.35.4"
           channel: "stable"
           cache: true
+          
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            .dart_tool
+          key: ${{ runner.os }}-pub-${{ hashFiles('pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
 
       - name: Install dependencies
         run: flutter pub get
 
       - name: Build Flutter Web
-        run: flutter build web --release
+        run: flutter build web --release --base-href /rarehunter-app/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
